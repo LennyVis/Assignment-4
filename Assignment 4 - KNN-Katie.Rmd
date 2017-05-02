@@ -359,7 +359,7 @@ The output tells us that the 7.67% of the observations were predicted incorrectl
 
 ## Changing control parameters
 
-We change the default paramters.
+We change the default parameters.
 
 ```{r,message=FALSE, warning=FALSE}
 treefit1 <- rpart(Type ~ . - Type, data = train, control = rpart.control(minsplit=10,cval=15,cp=0, minbucket=20))
@@ -371,7 +371,7 @@ sum(confusion_1[row(confusion_1) != col(confusion_1)]) / sum(confusion_1)
 On changing the parameters, we are able to successfully reduce the misclassificate rate from 7.67 % to 6.98 %.
 
 # 7. Decision Trees - Part II
-We would like to modify the hyperparameters of decision tree model further to tuen the model more specifically.
+We would like to modify the hyperparameters of decision tree model further to tune the model more specifically.
 
 ### 7.1 Building the tree
 
