@@ -102,7 +102,7 @@ library(caTools)
 Then we read in the csv file `MERGED2014_15_PP.csv` into the data frame `csb.df` using the `read_csv` function of the `readr` package.
 
 ```{r,message=FALSE, warning=FALSE}
-csb.df = read_csv(paste0('C:/Users/student/Desktop/MA710/Tuesday version/Assignment 1/CollegeScorecard_Raw_Data/', 'MERGED2014_15_PP.csv'))
+csb.df = read_csv(paste0('C:/Users/sevda/Documents/Bentley/710/Assignment 1/CollegeScorecard_Raw_Data/CollegeScorecard_Raw_Data/', 'MERGED2014_15_PP.csv'))
 
 ```
 ### 5.2 Data cleaning and variable modification
@@ -508,11 +508,11 @@ scaled.data <- cbind(scaled.data, Data[1])
 
 After the data variables are scaled, the next step is to split the data into a training and testing data frame. We will pick 50 of the observations for the testing data set and will leave the rest for the training data set.
 ```{r}
-Sample   <- sample(1:150, 50)
-testing  <- data.frame(scaled.data[ Sample, ])
-training <- data.frame(scaled.data[-Sample, ])
-dim(training)
-dim(testing)
+#Sample   <- sample(1:150, 50)
+#testing  <- data.frame(scaled.data[ Sample, ])
+#training <- data.frame(scaled.data[-Sample, ])
+dim(train)
+dim(test)
 ```
 
 At this point we are ready to run the k-neighbours model and get predictions for the testing data set. We will first perform the kknn algorithm by using the default parametrization. We will look into predicting based on 9 maximum number of neighbors.
@@ -520,7 +520,7 @@ At this point we are ready to run the k-neighbours model and get predictions for
 ```{r}
 suppressWarnings(suppressMessages(library(kknn)))
 model <- train.kknn(Type ~ ., 
-                    data = training, 
+                    data = train, 
                     kmax = 9,
                     response="ordinal")
 model
@@ -530,14 +530,14 @@ model
 We can see that with this model, the best results with the minal missclassification happen when the maximum number of neighbours (9) is used. We will apply the predict function on the testing data set and the results are shown below.
 
 ```{r}
-prediction <- predict(model, testing[, -20])
+prediction <- predict(model, test)
 prediction
 ```
 
 We will use the predicted results with the confusion matrix in order to derive the accuracy of the model.
 
 ```{r}
-confusionMatrix(testing$Type, prediction)
+confusionMatrix(test$Type, prediction)
 #table(testing[,1], prediction)
 ```
 We have achieved an accuracy of 92%. The sensitivity (or the proportion of positives that are correctly identified) is 96.3% and the specificity (the proportions of negatives that are correctly identified) is 86.9%. 
@@ -555,7 +555,7 @@ The k-neighbors algorithm from the train.kknn package allows us to explore how u
 ```{r}
 suppressWarnings(suppressMessages(library(kknn)))
 model <- train.kknn(Type ~ ., 
-                    data = training, 
+                    data = train, 
                     kernel = c("rectangular", "triangular", "epanechnikov", "gaussian", 
  	"rank", "optimal", "biweight","triweight", "cos", "inv", "optimal"),
                     kmax = 40)
@@ -565,8 +565,8 @@ model
 We can see that we get the minimum classification error when kernel = "biweight" and the maximum number of k is equal to 29.
 
 ```{r}
-prediction <- predict(model, testing[, -20])
-confusionMatrix(testing$Type, prediction)
+prediction <- predict(model, test)
+confusionMatrix(test$Type, prediction)
 #table(testing[,1], prediction)
 ```
 We have achieved an accuracy of 96%. The sensitivity (or the proportion of positives that are correctly identified) is 100% and the specificity (the proportions of negatives that are correctly identified) is 93.1%. 
@@ -578,7 +578,7 @@ In addition to both prameters we already discussed: kernel and the maximum numbe
 ```{r}
 suppressWarnings(suppressMessages(library(kknn)))
 model <- train.kknn(Type ~ ., 
-                    data = training, 
+                    data = train, 
                     kernel = c("rectangular", "triangular", "epanechnikov", "gaussian", 
  	"rank", "optimal", "biweight","triweight", "cos", "inv", "optimal"),
                     kmax = 40,
@@ -591,8 +591,8 @@ We can see that in this case we get the minimum classification error when kernel
 
 
 ```{r}
-prediction <- predict(model, testing[, -20])
-confusionMatrix(testing$Type, prediction)
+prediction <- predict(model, test)
+confusionMatrix(test$Type, prediction)
 #table(testing[,1], prediction)
 ```
 We have achieved an accuracy of 94%. The sensitivity (or the proportion of positives that are correctly identified) is 100% and the specificity (the proportions of negatives that are correctly identified) is 93.1%. 
@@ -603,7 +603,7 @@ As a next step, we will continue exploring how changing the Markowski distance w
 ```{r}
 suppressWarnings(suppressMessages(library(kknn)))
 model <- train.kknn(Type ~ ., 
-                    data = training, 
+                    data = train, 
                     kernel = c("rectangular", "triangular", "epanechnikov", "gaussian", 
  	"rank", "optimal", "biweight","triweight", "cos", "inv", "optimal"),
                     kmax = 40,
@@ -616,8 +616,8 @@ We can see that in this case we get the minimum classification error when kernel
 
 
 ```{r}
-prediction <- predict(model, testing[, -20])
-confusionMatrix(testing$Type, prediction)
+prediction <- predict(model, test)
+confusionMatrix(test$Type, prediction)
 #table(testing[,1], prediction)
 ```
 
@@ -629,7 +629,7 @@ We will explore next a distance which is equal to 0.35.
 ```{r}
 suppressWarnings(suppressMessages(library(kknn)))
 model <- train.kknn(Type ~ ., 
-                    data = training, 
+                    data = train, 
                     kernel = c("rectangular", "triangular", "epanechnikov", "gaussian", 
  	"rank", "optimal", "biweight","triweight", "cos", "inv", "optimal"),
                     kmax = 40,
@@ -641,8 +641,8 @@ plot(model)
 We can see that in this case we get the minimum classification error when kernel = "nominal" and the maximum number of k is equal to 8. We will check the confusion matrix for this solution.
 
 ```{r}
-prediction <- predict(model, testing[, -20])
-confusionMatrix(testing$Type, prediction)
+prediction <- predict(model, test)
+confusionMatrix(test$Type, prediction)
 #table(testing[,1], prediction)
 ```
 
@@ -654,7 +654,7 @@ Now we will explore what the results are when the distance is 0.7.
 ```{r}
 suppressWarnings(suppressMessages(library(kknn)))
 model <- train.kknn(Type ~ ., 
-                    data = training, 
+                    data = train, 
                     kernel = c("rectangular", "triangular", "epanechnikov", "gaussian", 
  	"rank", "optimal", "biweight","triweight", "cos", "inv", "optimal"),
                     kmax = 40,
@@ -667,8 +667,8 @@ We can see that in this case we get the minimum classification error when kernel
 
 
 ```{r}
-prediction <- predict(model, testing[, -20])
-confusionMatrix(testing$Type, prediction)
+prediction <- predict(model, test)
+confusionMatrix(test$Type, prediction)
 #table(testing[,1], prediction)
 ```
 
